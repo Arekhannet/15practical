@@ -40,18 +40,33 @@ public class Anagrams {
     }
 
     // Mirrors Python's A = {} anagram grouping loop
+    // Takes sorted list of anagram lines, writes theAnagrams.tex
     
-     public static Map<String, List<String>> buildAnagramGroups(Map<String, Integer> D) {
-        Map<String, List<String>> A = new HashMap<>();
-            // Takes word frequency map, groups words by their signature
-        for (String w : D.keySet()) {
-            String sig = signature(w.toLowerCase());
-            if (!A.containsKey(sig)) {
-                A.put(sig, new ArrayList<>());
-            }
-            A.get(sig).add(w);
+    public static void writeTexFile(List<String> lines) throws IOException {
+        // Create latex directory if it doesn't exist
+        File latexDir = new File("latex");
+        if (!latexDir.exists()) {
+            latexDir.mkdirs();
         }
-        return A;// Returns HashMap of signature >>>>>> list of anagram words (mirrors Python's A = {})
+
+        PrintWriter texFile = new PrintWriter(new FileWriter("latex/theAnagrams.tex"));
+        char letter = 'X';
+// Groups entries under bold uppercase letter headings
+    
+        for (String lemma : lines) {
+            if (lemma.isEmpty()) continue;
+            char initial = lemma.charAt(0);
+            // Print a new letter heading when the first letter changes
+            if (Character.toLowerCase(initial) != Character.toLowerCase(letter)) {
+                letter = initial;
+                texFile.printf(
+                    "%n\\vspace{14pt}%n\\noindent\\textbf{\\Large %s}\\\\*[+12pt]%n",
+                    Character.toUpperCase(initial)
+                );
+            }
+            texFile.print(lemma + "\n");
+        }
+        texFile.close();
     }
 
     public static void main(String[] args) {

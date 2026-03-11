@@ -1,22 +1,27 @@
 // AREKHANNE 4493911
 // Practical 15 - Anagrams using HashMap
-// AI Assistance: Claude (claude.ai)  was used to help translate Python logic to Java.
+// AI Assistance: Claude (claude.ai) - free version - was used to help translate Python logic to Java.
 
 import java.io.*;
 import java.util.*;
 
 public class Anagrams {
-    //sort characters of word alphabetically
+
+    // Sorts characters of a word alphabetically to create a unique key
+    // e.g. "reader" -> "adeerr"
     public static String signature(String word) {
         char[] chars = word.toCharArray();
         Arrays.sort(chars);
         return new String(chars);
     }
-     public static Map<String, Integer> readWords(String filename) throws IOException {
+
+    // Reads words from file, strips punctuation, counts frequency
+    // Returns a HashMap of word -> frequency (mirrors Python's D = {})
+    public static Map<String, Integer> readWords(String filename) throws IOException {
         Map<String, Integer> D = new HashMap<>();
 
         BufferedReader f = new BufferedReader(
-            new InputStreamReader(new FileInputStream(filename), "ISO-8859-1")
+                new InputStreamReader(new FileInputStream(filename), "ISO-8859-1")
         );
 
         String line = f.readLine();
@@ -39,9 +44,23 @@ public class Anagrams {
         return D;
     }
 
-    // Mirrors Python's A = {} anagram grouping loop
+    // Groups words by their signature into anagram groups
+    // Returns HashMap of signature -> list of anagram words (mirrors Python's A = {})
+    public static Map<String, List<String>> buildAnagramGroups(Map<String, Integer> D) {
+        Map<String, List<String>> A = new HashMap<>();
+
+        for (String w : D.keySet()) {
+            String sig = signature(w.toLowerCase());
+            if (!A.containsKey(sig)) {
+                A.put(sig, new ArrayList<>());
+            }
+            A.get(sig).add(w);
+        }
+        return A;
+    }
+
     // Takes sorted list of anagram lines, writes theAnagrams.tex
-    
+    // Groups entries under bold uppercase letter headings
     public static void writeTexFile(List<String> lines) throws IOException {
         // Create latex directory if it doesn't exist
         File latexDir = new File("latex");
@@ -51,8 +70,7 @@ public class Anagrams {
 
         PrintWriter texFile = new PrintWriter(new FileWriter("latex/theAnagrams.tex"));
         char letter = 'X';
-// Groups entries under bold uppercase letter headings
-    
+
         for (String lemma : lines) {
             if (lemma.isEmpty()) continue;
             char initial = lemma.charAt(0);
@@ -60,8 +78,8 @@ public class Anagrams {
             if (Character.toLowerCase(initial) != Character.toLowerCase(letter)) {
                 letter = initial;
                 texFile.printf(
-                    "%n\\vspace{14pt}%n\\noindent\\textbf{\\Large %s}\\\\*[+12pt]%n",
-                    Character.toUpperCase(initial)
+                        "%n\\vspace{14pt}%n\\noindent\\textbf{\\Large %s}\\\\*[+12pt]%n",
+                        Character.toUpperCase(initial)
                 );
             }
             texFile.print(lemma + "\n");
@@ -69,7 +87,7 @@ public class Anagrams {
         texFile.close();
     }
 
-   // Main method - orchestrates all steps
+    // Main method - orchestrates all steps
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Usage: java Anagrams <inputfile>");
@@ -121,7 +139,7 @@ public class Anagrams {
             writeTexFile(anagramLines);
 
             System.out.println("Done! Anagram groups found: " +
-                A.values().stream().filter(g -> g.size() > 1).count());
+                    A.values().stream().filter(g -> g.size() > 1).count());
 
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());

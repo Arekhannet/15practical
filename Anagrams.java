@@ -39,6 +39,21 @@ public class Anagrams {
         return D;
     }
 
+    // Mirrors Python's A = {} anagram grouping loop
+    
+     public static Map<String, List<String>> buildAnagramGroups(Map<String, Integer> D) {
+        Map<String, List<String>> A = new HashMap<>();
+            // Takes word frequency map, groups words by their signature
+        for (String w : D.keySet()) {
+            String sig = signature(w.toLowerCase());
+            if (!A.containsKey(sig)) {
+                A.put(sig, new ArrayList<>());
+            }
+            A.get(sig).add(w);
+        }
+        return A;// Returns HashMap of signature >>>>>> list of anagram words (mirrors Python's A = {})
+    }
+
     public static void main(String[] args) {
         // TODO: orchestrate all steps
     }

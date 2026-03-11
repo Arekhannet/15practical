@@ -1,6 +1,6 @@
 // AREKHANNE 4493911
 // Practical 15 - Anagrams using HashMap
-// AI Assistance: Claude (claude.ai) - free version - was used to help translate Python logic to Java.
+// AI Assistance: Claude - was used to help translate some Python logic to Java.
 
 import java.io.*;
 import java.util.*;
@@ -16,7 +16,7 @@ public class Anagrams {
     }
 
     // Reads words from file, strips punctuation, counts frequency
-    // Returns a HashMap of word -> frequency (mirrors Python's D = {})
+    // Returns a HashMap of word >>>>>> frequency (mirrors Python's D = {})
     public static Map<String, Integer> readWords(String filename) throws IOException {
         Map<String, Integer> D = new HashMap<>();
 

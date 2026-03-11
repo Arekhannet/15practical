@@ -69,8 +69,63 @@ public class Anagrams {
         texFile.close();
     }
 
+   // Main method - orchestrates all steps
     public static void main(String[] args) {
-        // TODO: orchestrate all steps
+        if (args.length != 1) {
+            System.out.println("Usage: java Anagrams <inputfile>");
+            return;
+        }
+
+        try {
+            // Step 1: Read and clean words from file
+            System.out.println("Reading words from: " + args[0]);
+            Map<String, Integer> D = readWords(args[0]);
+            System.out.println("Unique words found: " + D.size());
+
+            // Step 2: Build anagram groups
+            System.out.println("Building anagram groups...");
+            Map<String, List<String>> A = buildAnagramGroups(D);
+
+            // Step 3: Build sorted list of anagram lines with rotations
+            System.out.println("Generating anagram lines...");
+            List<String> anagramLines = new ArrayList<>();
+
+            for (String key : A.keySet()) {
+                List<String> group = A.get(key);
+                if (group.size() > 1) {
+                    // Build the anagram list string
+                    StringBuilder sb = new StringBuilder();
+                    for (String word : group) {
+                        if (sb.length() == 0) {
+                            sb.append(word);
+                        } else {
+                            sb.append(" ").append(word);
+                        }
+                    }
+                    // Add all rotations (mirrors Python's repeat loop)
+                    String al = sb.toString();
+                    anagramLines.add(al + "\\\\");
+                    for (int i = 0; i < group.size() - 1; i++) {
+                        int space = al.indexOf(' ');
+                        al = al.substring(space + 1) + ' ' + al.substring(0, space);
+                        anagramLines.add(al + "\\\\");
+                    }
+                }
+            }
+
+            // Step 4: Sort the lines
+            Collections.sort(anagramLines);
+
+            // Step 5: Write the LaTeX file
+            System.out.println("Writing latex/theAnagrams.tex...");
+            writeTexFile(anagramLines);
+
+            System.out.println("Done! Anagram groups found: " +
+                A.values().stream().filter(g -> g.size() > 1).count());
+
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
 }
